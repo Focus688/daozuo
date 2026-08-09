@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>道坐 · 形神兼养</title>
+<meta name="description" content="道家打坐心法引导 · 每日修身三件套（打坐 / 俯卧撑 / 踮脚）打卡">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ============ 顶部条 ============ -->
+<header class="topbar">
+  <div class="brand">道坐<span class="brand-sub">· 形神兼养</span></div>
+  <div class="streak" id="streakBox" title="连续达标天数">
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg>
+    <span id="streakNum">0</span><span class="streak-label">天</span>
+  </div>
+</header>
+
+<!-- ============ Hero ============ -->
+<section class="hero">
+  <div class="hero-ring" aria-hidden="true">
+    <svg viewBox="0 0 200 200" width="200" height="200">
+      <circle cx="100" cy="100" r="88" fill="none" stroke="#c9c0a8" stroke-width="1"/>
+      <circle cx="100" cy="100" r="88" fill="none" stroke="#a6472e" stroke-width="1.5" stroke-dasharray="4 6" class="hero-ring-dash"/>
+      <circle cx="100" cy="100" r="38" fill="none" stroke="#3e5a52" stroke-width="1"/>
+      <path d="M100 62 a38 38 0 0 1 0 76 a30 30 0 0 1 0 -60 a22 22 0 0 1 0 44" fill="none" stroke="#2f2b26" stroke-width="1.6" class="hero-snake"/>
+      <circle cx="100" cy="140" r="4" fill="#a6472e"/>
+    </svg>
+  </div>
+  <h1 class="hero-title">形神兼养</h1>
+  <p class="hero-sub">动以养形 · 静以养神 · 食以养气</p>
+  <p class="hero-tip">先动后静，内服押后，食疗打底 —— 每天十分钟，从今晚开始。</p>
+</section>
+
+<!-- ============ 今日三件事 ============ -->
+<section class="section">
+  <h2 class="section-title"><span class="sec-no">一</span>今日三件事</h2>
+  <p class="section-desc">每完成一件点一下，三项全齐才算「达标一天」。</p>
+
+  <div class="cards">
+    <!-- 打坐 -->
+    <article class="card" id="card-meditation">
+      <div class="card-head">
+        <h3>🧘 打坐</h3>
+        <span class="badge">静 · 养神</span>
+      </div>
+      <p class="card-desc">调身 → 调息 → 调心。<br>每天 10–15 分钟，固定时间，今晚就坐。</p>
+      <div class="card-actions">
+        <button class="btn btn-primary" id="btnStart">开始打坐</button>
+        <button class="btn-check" data-key="meditation" aria-label="标记打坐完成">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+        </button>
+      </div>
+    </article>
+
+    <!-- 俯卧撑 -->
+    <article class="card" id="card-pushup">
+      <div class="card-head">
+        <h3>💪 俯卧撑</h3>
+        <span class="badge">动 · 养形</span>
+      </div>
+      <p class="card-desc">新手 3 组 × 5–8 个，做不动就跪姿降级；<br>进阶 4 组 × 10–12 个。身体一条直线，别塌腰。</p>
+      <div class="card-actions">
+        <span class="card-note">约 5 分钟</span>
+        <button class="btn-check" data-key="pushup" aria-label="标记俯卧撑完成">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+        </button>
+      </div>
+    </article>
+
+    <!-- 踮脚 -->
+    <article class="card" id="card-heel">
+      <div class="card-head">
+        <h3>🦶 踮脚</h3>
+        <span class="badge">动 · 养形</span>
+      </div>
+      <p class="card-desc">敦踵法：脚跟抬起停 2 秒再落下。<br>每天累计 10 分钟，补肾气、防久坐血栓。</p>
+      <div class="card-actions">
+        <span class="card-note">约 10 分钟</span>
+        <button class="btn-check" data-key="heel" aria-label="标记踮脚完成">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+        </button>
+      </div>
+    </article>
+  </div>
+
+  <!-- 本周进度 -->
+  <div class="week">
+    <div class="week-label">近 7 天</div>
+    <div class="week-dots" id="weekDots"></div>
+    <div class="week-today" id="todayState">今日 0/3</div>
+  </div>
+</section>
+
+<!-- ============ 打坐心法 ============ -->
+<section class="section">
+  <h2 class="section-title"><span class="sec-no">二</span>道家打坐心法</h2>
+  <p class="section-desc">根子在《道德经》「致虚极，守静笃」与《庄子》「坐忘」—— 每天练习，层层递进。</p>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-no">壹</div>
+      <div class="step-body">
+        <h3>调身 —— 姿势稳了，心才稳</h3>
+        <ul>
+          <li>盘腿坐（散盘即可），臀下垫高 3–5 厘米，脊背竖直如筷</li>
+          <li>双肩下沉，下颚微收，舌尖轻抵上颚</li>
+          <li>眼微闭（垂帘），手自然放膝上或结定印</li>
+        </ul>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-no">贰</div>
+      <div class="step-body">
+        <h3>调息 —— 专气致柔，能如婴儿乎</h3>
+        <ul>
+          <li>先自然呼吸，再慢慢过渡到腹式：吸气腹部鼓起，呼气收回</li>
+          <li>练到细、匀、深、长，不憋气、不追求快</li>
+          <li>数息：每一息数一个数，1 数到 10，再从头来</li>
+        </ul>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-no">叁</div>
+      <div class="step-body">
+        <h3>调心 —— 念头来了，不追不打</h3>
+        <ul>
+          <li>杂念像云飘过，看见了，放它走，回到呼吸</li>
+          <li>坐不住时，先检查身体哪里紧，松开再坐</li>
+          <li>每次「发现走神并回来」，就是一次进步</li>
+        </ul>
+      </div>
+    </div>
+    <div class="step step-quote">
+      <div class="step-no">境</div>
+      <div class="step-body">
+        <h3>坐忘 —— 进阶之境</h3>
+        <p class="quote">「堕肢体，黜聪明，离形去知，同于大通。」<span class="quote-src">——《庄子·大宗师》</span></p>
+        <p class="quote">「致虚极，守静笃。万物并作，吾以观复。」<span class="quote-src">——《道德经》第十六章</span></p>
+        <p class="quote-plain">人话：把身体和杂念都暂时放下，不较劲，不分析，只是安安静静地坐着 —— 这就是入门级的「坐忘」。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 食疗参考 ============ -->
+<section class="section">
+  <h2 class="section-title"><span class="sec-no">三</span>内服 · 三层安全阶梯</h2>
+  <p class="section-desc">第 1 个月只走食疗；第 2 个月起，先去正规中医院辨证，再考虑中成药。</p>
+
+  <div class="tiers">
+    <div class="tier tier-safe">
+      <div class="tier-head"><span class="tier-tag">第一层</span><h3>🥗 药食同源 · 当食物吃</h3></div>
+      <p>国家卫健委 102 种名单内，偏性小，日常安全：</p>
+      <ul>
+        <li>气血：枸杞 + 红枣 + 桂圆（泡水，桂圆易上火，适量）</li>
+        <li>脾胃：山药 + 茯苓 + 芡实（煮粥，久坐党友好）</li>
+        <li>安神：酸枣仁 + 百合 + 莲子（睡前煮水）</li>
+      </ul>
+    </div>
+    <div class="tier tier-caution">
+      <div class="tier-head"><span class="tier-tag">第二层</span><h3>🧪 中成药 · 先辨证再用</h3></div>
+      <p>六味地黄丸（阴虚）与金匮肾气丸（阳虚）方向相反 —— 吃反了雪上加霜。</p>
+      <ul>
+        <li>阴虚信号：手心热、口干、盗汗、失眠</li>
+        <li>阳虚信号：怕冷、手脚凉、夜尿多、没精神</li>
+        <li>拿不准？挂个中医号，让医生把脉定方向</li>
+      </ul>
+    </div>
+    <div class="tier tier-danger">
+      <div class="tier-head"><span class="tier-tag">红线</span><h3>⛔ 别碰 · 自己别试</h3></div>
+      <ul>
+        <li>何首乌（生品伤肝）、番泻叶、艾叶长期服用、苦参</li>
+        <li>来路不明的偏方、秘方、自制药酒</li>
+        <li>「补肾壮阳」类猛药（鹿茸、玛卡、淫羊藿）不辨证乱吃</li>
+      </ul>
+    </div>
+  </div>
+
+  <p class="disclaimer">2024 年上海中医药大学追踪 2000 人：遵医嘱用药肝肾异常率 2.3%，自行乱配高达 19.7%。本站内容为信息整合，不是处方；真要用药，请听执业中医师的。</p>
+</section>
+
+<!-- ============ Footer ============ -->
+<footer class="footer">
+  <p>道坐 · 修身三件套 —— 晨练夜坐，动静循环。</p>
+  <p class="footer-small">习惯平均要 66 天才能长牢。头一周只求「做到」，不求「做好」。</p>
+</footer>
+
+<!-- ============ 打坐全屏 Overlay ============ -->
+<div class="overlay" id="overlay" aria-hidden="true">
+  <div class="overlay-top">
+    <div class="overlay-timer" id="overlayTimer">10:00</div>
+    <button class="btn btn-ghost" id="btnQuit">提前结束</button>
+  </div>
+
+  <div class="overlay-main">
+    <div class="breath-ring" id="breathRing">
+      <svg viewBox="0 0 240 240" width="240" height="240">
+        <circle cx="120" cy="120" r="100" fill="none" stroke="#4a443a" stroke-width="1.5"/>
+        <circle cx="120" cy="120" r="40" fill="none" stroke="#d8cdb4" stroke-width="2" class="breath-circle" id="breathCircle"/>
+        <circle cx="120" cy="120" r="3" fill="#c9b98a"/>
+      </svg>
+    </div>
+    <div class="breath-word" id="breathWord">调身</div>
+    <p class="overlay-guide" id="overlayGuide">脊背竖直如筷，双肩下沉，舌尖轻抵上颚</p>
+    <div class="overlay-count" id="overlayCount">—</div>
+  </div>
+
+  <div class="overlay-done" id="overlayDone" hidden>
+    <div class="done-mark">
+      <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+    </div>
+    <h2>今日一坐，心已静</h2>
+    <p id="doneText">已自动打卡 · 连续天数 +1</p>
+    <button class="btn btn-primary" id="btnDone">收功</button>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
