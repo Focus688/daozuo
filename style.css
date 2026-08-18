@@ -376,11 +376,31 @@ body {
   gap: 26px;
   padding: 20px;
 }
-.breath-ring svg { overflow: visible; }
-.breath-circle {
-  transform-origin: 120px 120px;
-  transition: transform 4s ease-in-out;
-  transform: scale(0.55);
+.breath-stage {
+  position: relative;
+  width: min(64vw, 340px);
+  height: min(64vw, 340px);
+  aspect-ratio: 1 / 1;
+  overflow: visible;
+}
+#breathCanvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  cursor: default;
+}
+.breath-stage::before {
+  /* 极淡中心光晕，给粒子一个"丹田"锚点 */
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 22%;
+  height: 22%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(201,185,138,.14) 0%, rgba(201,185,138,0) 70%);
+  pointer-events: none;
 }
 .breath-word {
   font-family: var(--serif);
