@@ -1,32 +1,44 @@
-/* ============ 道坐 · 形神兼养 ============ */
+/* ============ 道坐 · 形神兼养（3D 粒子星云布局） ============ */
 :root {
-  --paper: #f7f3ea;        /* 宣纸 */
-  --paper-deep: #efe8d8;
-  --card: #fffdf7;
-  --ink: #2f2b26;          /* 墨 */
-  --ink-soft: #6f6a5e;
-  --ink-faint: #9a9384;
-  --line: #e5dfd0;
-  --cinnabar: #a6472e;     /* 朱砂 */
-  --cinnabar-deep: #8a3a24;
-  --teal: #3e5a52;         /* 黛青 */
-  --gold: #b98a2f;         /* 金 */
-  --danger: #9c3d2c;
+  --bg: #12100b;             /* 深空 */
+  --bg-deep: #0f0d0a;
+  --panel: rgba(26, 23, 17, 0.72);
+  --card: rgba(30, 27, 20, 0.66);
+  --ink: #e6dfcc;            /* 暖白墨 */
+  --ink-soft: #a39a86;
+  --ink-faint: #756e5e;
+  --line: #3a3628;
+  --line-soft: #2c291e;
+  --cinnabar: #c05a3c;       /* 朱砂（暗底提亮） */
+  --cinnabar-deep: #a34a30;
+  --teal: #6d8f80;           /* 黛青 */
+  --gold: #c9b98a;           /* 金 */
+  --danger: #c25a40;
   --serif: "Songti SC", "Noto Serif SC", "Source Han Serif SC", "STSong", "SimSun", serif;
   --sans: -apple-system, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; background: var(--bg); }
 
 body {
-  background: var(--paper);
+  background: transparent;
   color: var(--ink);
   font-family: var(--sans);
   font-size: 16px;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+}
+
+/* ============ 全屏 3D 粒子背景 ============ */
+#bgCanvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  pointer-events: none;
 }
 
 /* ============ 顶部条 ============ */
@@ -35,12 +47,12 @@ body {
   align-items: center;
   justify-content: space-between;
   padding: 18px 28px;
-  border-bottom: 1px solid var(--line);
-  background: rgba(247, 243, 234, 0.9);
+  border-bottom: 1px solid var(--line-soft);
+  background: rgba(18, 16, 11, 0.6);
   position: sticky;
   top: 0;
   z-index: 10;
-  backdrop-filter: blur(6px);
+  backdrop-filter: blur(10px);
 }
 
 .brand {
@@ -61,55 +73,51 @@ body {
   align-items: center;
   gap: 6px;
   font-family: var(--serif);
-  color: var(--cinnabar);
+  color: var(--gold);
   font-size: 17px;
   padding: 5px 12px;
-  border: 1px solid #e0c9b8;
+  border: 1px solid #4a4232;
   border-radius: 999px;
-  background: #fdf6ef;
+  background: rgba(40, 35, 24, 0.6);
 }
 .streak-label { font-size: 13px; color: var(--ink-soft); }
 
 /* ============ Hero ============ */
 .hero {
   text-align: center;
-  padding: 64px 24px 40px;
+  padding: 92px 24px 70px;
   position: relative;
   overflow: hidden;
 }
-.hero-ring {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 20px;
+.hero::before {
+  /* 极淡中心光晕，给粒子一个「丹田」锚点 */
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 42%;
+  width: 340px;
+  height: 340px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(201, 185, 138, 0.10) 0%, rgba(201, 185, 138, 0) 70%);
+  pointer-events: none;
+  z-index: -1;
 }
-.hero-ring-dash {
-  animation: rotate 60s linear infinite;
-  transform-origin: 100px 100px;
-}
-.hero-snake {
-  animation: breathe 10s ease-in-out infinite;
-  transform-origin: 100px 100px;
-}
-@keyframes rotate { to { transform: rotate(360deg); } }
-@keyframes breathe {
-  0%, 100% { transform: scale(1); }
-  40% { transform: scale(1.06); }
-  70% { transform: scale(0.97); }
-}
-
 .hero-title {
   font-family: var(--serif);
   font-size: 52px;
   letter-spacing: 18px;
   text-indent: 18px;
   font-weight: 600;
+  color: var(--ink);
+  text-shadow: 0 0 30px rgba(201, 185, 138, 0.18);
 }
 .hero-sub {
   margin-top: 14px;
   font-family: var(--serif);
   font-size: 19px;
   letter-spacing: 6px;
-  color: var(--teal);
+  color: var(--gold);
 }
 .hero-tip {
   margin-top: 18px;
@@ -132,11 +140,12 @@ body {
   gap: 12px;
   padding-bottom: 10px;
   border-bottom: 1px solid var(--line);
+  color: var(--ink);
 }
 .sec-no {
   font-size: 15px;
   color: var(--cinnabar);
-  border: 1px solid #dcb9a6;
+  border: 1px solid #5a3a2a;
   border-radius: 4px;
   padding: 1px 8px;
 }
@@ -161,16 +170,21 @@ body {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  transition: box-shadow .25s, transform .25s;
+  backdrop-filter: blur(8px);
+  transition: box-shadow .25s, transform .25s, border-color .25s;
 }
-.card:hover { box-shadow: 0 6px 24px rgba(47, 43, 38, 0.07); transform: translateY(-2px); }
-.card.done { border-color: var(--teal); background: #f6f8f4; }
+.card:hover {
+  box-shadow: 0 6px 28px rgba(0, 0, 0, 0.4), 0 0 20px rgba(201, 185, 138, 0.06);
+  transform: translateY(-2px);
+  border-color: #4a4232;
+}
+.card.done { border-color: var(--teal); background: rgba(52, 66, 58, 0.55); }
 .card-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
-.card-head h3 { font-family: var(--serif); font-size: 20px; letter-spacing: 2px; }
+.card-head h3 { font-family: var(--serif); font-size: 20px; letter-spacing: 2px; color: var(--ink); }
 .badge {
   font-size: 12px;
   color: var(--ink-soft);
@@ -199,7 +213,7 @@ body {
 .btn:active { transform: scale(0.97); }
 .btn-primary {
   background: var(--cinnabar);
-  color: #fff8ee;
+  color: #fff3e6;
   font-family: var(--serif);
   letter-spacing: 2px;
 }
@@ -222,7 +236,7 @@ body {
 .card.done .btn-check {
   background: var(--teal);
   border-color: var(--teal);
-  color: #fff;
+  color: #eaf3ef;
 }
 
 /* ============ 本周进度 ============ */
@@ -232,8 +246,10 @@ body {
   gap: 14px;
   margin-top: 22px;
   padding: 14px 18px;
-  background: var(--paper-deep);
+  background: var(--panel);
+  border: 1px solid var(--line-soft);
   border-radius: 12px;
+  backdrop-filter: blur(8px);
 }
 .week-label { font-size: 13px; color: var(--ink-soft); }
 .week-dots { display: flex; gap: 8px; }
@@ -241,7 +257,7 @@ body {
   width: 26px;
   height: 26px;
   border-radius: 8px;
-  background: var(--card);
+  background: rgba(255, 253, 247, 0.04);
   border: 1px solid var(--line);
   display: flex;
   align-items: center;
@@ -249,9 +265,9 @@ body {
   font-size: 11px;
   color: var(--ink-faint);
 }
-.week-dot.on { background: var(--teal); border-color: var(--teal); color: #fff; }
+.week-dot.on { background: var(--teal); border-color: var(--teal); color: #eaf3ef; }
 .week-dot.today { box-shadow: 0 0 0 2px var(--cinnabar); }
-.week-today { margin-left: auto; font-family: var(--serif); font-size: 15px; color: var(--teal); }
+.week-today { margin-left: auto; font-family: var(--serif); font-size: 15px; color: var(--gold); }
 
 /* ============ 心法阶梯 ============ */
 .steps { margin-top: 20px; display: flex; flex-direction: column; gap: 14px; }
@@ -262,12 +278,13 @@ body {
   border: 1px solid var(--line);
   border-radius: 14px;
   padding: 20px 22px;
+  backdrop-filter: blur(8px);
 }
 .step-no {
   flex: 0 0 42px;
   height: 42px;
   border-radius: 10px;
-  background: var(--paper-deep);
+  background: rgba(255, 253, 247, 0.04);
   color: var(--cinnabar);
   font-family: var(--serif);
   font-size: 18px;
@@ -275,10 +292,10 @@ body {
   align-items: center;
   justify-content: center;
 }
-.step-body h3 { font-family: var(--serif); font-size: 18px; letter-spacing: 1px; margin-bottom: 8px; }
+.step-body h3 { font-family: var(--serif); font-size: 18px; letter-spacing: 1px; margin-bottom: 8px; color: var(--ink); }
 .step-body ul { padding-left: 20px; }
 .step-body li { font-size: 15px; color: var(--ink-soft); margin-bottom: 4px; }
-.step-quote { border-color: #d8cdb4; background: #fbf7ee; }
+.step-quote { border-color: #4a4232; background: rgba(40, 35, 24, 0.5); }
 .quote {
   font-family: var(--serif);
   font-size: 17px;
@@ -295,9 +312,10 @@ body {
   padding: 20px 22px;
   border: 1px solid var(--line);
   background: var(--card);
+  backdrop-filter: blur(8px);
 }
 .tier-head { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
-.tier-head h3 { font-family: var(--serif); font-size: 18px; letter-spacing: 1px; }
+.tier-head h3 { font-family: var(--serif); font-size: 18px; letter-spacing: 1px; color: var(--ink); }
 .tier-tag {
   font-size: 12px;
   border-radius: 999px;
@@ -318,7 +336,7 @@ body {
   line-height: 1.7;
   padding: 12px 16px;
   border-left: 3px solid var(--line);
-  background: var(--paper-deep);
+  background: var(--panel);
   border-radius: 0 10px 10px 0;
 }
 
@@ -326,7 +344,7 @@ body {
 .footer {
   text-align: center;
   padding: 40px 24px 50px;
-  border-top: 1px solid var(--line);
+  border-top: 1px solid var(--line-soft);
   color: var(--ink-soft);
 }
 .footer p { font-family: var(--serif); letter-spacing: 2px; }
@@ -390,7 +408,6 @@ body {
   cursor: default;
 }
 .breath-stage::before {
-  /* 极淡中心光晕，给粒子一个"丹田"锚点 */
   content: "";
   position: absolute;
   left: 50%;
@@ -469,6 +486,7 @@ body {
 
 /* ============ 响应式 ============ */
 @media (max-width: 720px) {
+  .hero { padding: 64px 20px 50px; }
   .hero-title { font-size: 38px; letter-spacing: 12px; text-indent: 12px; }
   .cards { grid-template-columns: 1fr; }
   .week { flex-wrap: wrap; }

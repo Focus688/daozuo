@@ -149,6 +149,7 @@
   function openOverlay() {
     els.overlay.classList.add("open");
     els.overlay.setAttribute("aria-hidden", "false");
+    bgNebula.halt();   // 打坐时暂停背景星云，省 CPU
     var pick = buildDurationPick();
     // 停粒子，先显示选时长
     particle.halt();
@@ -165,6 +166,7 @@
     stopSession();
     els.overlay.classList.remove("open");
     els.overlay.setAttribute("aria-hidden", "true");
+    bgNebula.start();   // 恢复背景星云
   }
 
   function fmt(sec) {
@@ -389,6 +391,107 @@
     return { start: start, halt: halt, setStage: setStage };
   })();
 
+  /* ============ 全屏 3D 粒子星云背景（常驻，静心氛围） ============ */
+  var bgNebula = (function () {
+    var cv = document.getElementById("bgCanvas");
+    if (!cv) return { start: function () {}, halt: function () {} };
+    var ctx = cv.getContext("2d");
+    var W = 0, H = 0, DPR = 1, CX = 0, CY = 0, RADIUS = 0;
+    var pts = [];
+    var raf = null, tPrev = 0, t = 0, running = false;
+
+    function spawn(n) {
+      pts = [];
+      for (var i = 0; i < n; i++) {
+        var u = Math.random() * 2 - 1;
+        var th = Math.random() * Math.PI * 2;
+        var s = Math.sqrt(1 - u * u);
+        var r = Math.pow(Math.random(), 0.6);
+        pts.push({
+          bx: s * Math.cos(th) * r,
+          by: u * r,
+          bz: s * Math.sin(th) * r,
+          wob: Math.random() * Math.PI * 2,
+          spd: 0.2 + Math.random() * 0.6,
+          siz: 0.5 + Math.random() * 1.5
+        });
+      }
+    }
+
+    function resize() {
+      DPR = Math.min(window.devicePixelRatio || 1, 2);
+      W = cv.width = Math.max(1, Math.round(window.innerWidth * DPR));
+      H = cv.height = Math.max(1, Math.round(window.innerHeight * DPR));
+      CX = W / 2; CY = H / 2;
+      RADIUS = Math.min(W, H) * 0.55;
+      spawn(200);
+    }
+
+    function draw(resp) {
+      var grad = ctx.createRadialGradient(CX, CY * 0.82, 0, CX, CY, Math.max(W, H) * 0.75);
+      grad.addColorStop(0, "#1f1c15");
+      grad.addColorStop(0.5, "#161410");
+      grad.addColorStop(1, "#0f0d0a");
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, W, H);
+
+      var rot = t * 0.05, cosR = Math.cos(rot), sinR = Math.sin(rot);
+      for (var i = 0; i < pts.length; i++) {
+        var p = pts[i];
+        var x = p.bx + Math.sin(p.wob + t * p.spd) * 0.03;
+        var y = p.by + Math.cos(p.wob * 1.2 + t * p.spd * 0.8) * 0.03;
+        var z = p.bz + Math.sin(p.wob * 0.6 + t * p.spd * 0.5) * 0.03;
+
+        var rx = x * cosR - z * sinR;
+        var rz = x * sinR + z * cosR;
+        var depth = 1 / (1.9 - rz * 0.5);
+        var rad = 1 + 0.04 * resp;
+        var px = CX + rx * RADIUS * rad * depth;
+        var py = CY + y * RADIUS * rad * depth;
+
+        if (px < -20 || px > W + 20 || py < -20 || py > H + 20) continue;
+
+        var twinkle = 0.6 + 0.4 * Math.sin(p.wob + t * 1.5);
+        var size = p.siz * depth * (0.5 + 0.5 * twinkle);
+        var alpha = (0.25 + 0.45 * depth) * twinkle;
+        var light = 0.45 + 0.55 * depth;
+        var rCol = Math.min(255, Math.round(216 * light));
+        var gCol = Math.min(255, Math.round(190 * light));
+        var bCol = Math.min(255, Math.round(128 * light));
+
+        ctx.beginPath();
+        ctx.arc(px, py, size, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(" + rCol + "," + gCol + "," + bCol + "," + alpha + ")";
+        ctx.fill();
+      }
+    }
+
+    function loop(ts) {
+      if (!running) return;
+      var dt = Math.min(0.05, (ts - tPrev) / 1000); tPrev = ts; t += dt;
+      var resp = 0.5 - 0.5 * Math.cos(t * 0.35);
+      draw(resp);
+      raf = requestAnimationFrame(loop);
+    }
+
+    function start() {
+      if (running) return;
+      running = true;
+      resize();
+      tPrev = performance.now();
+      raf = requestAnimationFrame(loop);
+    }
+
+    function halt() {
+      running = false;
+      if (raf) { cancelAnimationFrame(raf); raf = null; }
+    }
+
+    window.addEventListener("resize", function () { if (running) resize(); });
+
+    return { start: start, halt: halt };
+  })();
+
   function startTimers() {
     session.timer = setInterval(function () {
       if (!session) return;
@@ -450,4 +553,5 @@
 
   /* ---------- 初始化 ---------- */
   render();
+  bgNebula.start();
 })();
